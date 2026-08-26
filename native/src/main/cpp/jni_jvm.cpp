@@ -1,0 +1,18 @@
+#include "jni_jvm.h"
+
+static JavaVM* jvm;
+
+namespace Jni
+{
+    void InitJvm(JNIEnv* env) {
+        env->GetJavaVM(&jvm);
+    }
+
+    JNIEnv* GetEnv() {
+        JNIEnv* env;
+        // Android's NDK JNI headers expose JNI 1.6 as the stable VM ABI.
+        jint res = jvm->GetEnv((void**)(&env), JNI_VERSION_1_6);
+        assert(res == JNI_OK);
+        return env;
+    }
+}

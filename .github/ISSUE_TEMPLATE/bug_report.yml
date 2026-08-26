@@ -1,0 +1,37 @@
+name: Android/Pojav bug report
+description: Report a native loading, rendering, or input problem
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: input
+    id: device
+    attributes:
+      label: Device, GPU and Android version
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Pojav build, renderer and CPU ABI
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Minecraft, LWJGL and imgui-java versions
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Full relevant log
+      render: shell
+    validations:
+      required: true
+

@@ -1,0 +1,46 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+group = project.group
+version = project.version
+
+repositories { mavenCentral() }
+
+dependencies {
+    api "io.github.spair:imgui-java-binding:${imguiVersion}"
+    compileOnly "io.github.spair:imgui-java-lwjgl3:${imguiVersion}"
+    compileOnly platform("org.lwjgl:lwjgl-bom:3.3.3")
+    compileOnly "org.lwjgl:lwjgl"
+    compileOnly "org.lwjgl:lwjgl-glfw"
+    compileOnly "org.lwjgl:lwjgl-opengl"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+    withSourcesJar()
+    withJavadocJar()
+}
+
+tasks.register('verifyAndroidNatives') {
+    def abis = ['arm64-v8a', 'armeabi-v7a', 'x86_64']
+    inputs.files(abis.collect { file("src/main/resources/native/android/${it}/libimgui-java64.so") })
+    doLast {
+        abis.each { abi ->
+            def nativeFile = file("src/main/resources/native/android/${abi}/libimgui-java64.so")
+            if (!nativeFile.isFile() || nativeFile.length() < 100_000L) {
+                throw new GradleException("Missing or invalid Android native: ${nativeFile}")
+            }
+        }
+    }
+}
+
+check.dependsOn verifyAndroidNatives
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) { from components.java }
+    }
+}
